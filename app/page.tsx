@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type Stage = "landing" | "vibe" | "discover" | "summary";
+type Stage = "landing" |"home" | "vibe" | "discover" | "summary";
 type SwipeAction = "add" | "skip" | "superlike" | "save";
 type CardMotion = "idle" | "left" | "right" | "up" | "down";
 
@@ -14,6 +14,7 @@ const vibes = [
   "😌 Chill",
   "🎉 Party",
 ];
+const quickVibes = vibes.slice(0, 6);
 
 const songs = [
   {
@@ -160,7 +161,7 @@ export default function Home() {
 
           <div className="mt-10 flex w-full max-w-sm flex-col gap-4">
             <button
-              onClick={() => setStage("vibe")}
+              onClick={() => setStage("home")}
               className="rounded-full bg-green-500 py-4 text-lg font-bold text-black transition hover:bg-green-400"
             >
               Start Discovering
@@ -176,7 +177,98 @@ export default function Home() {
           </div>
         </section>
       )}
+      {stage === "home" && (
+  <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
+    <div className="mx-auto w-full max-w-lg">
+      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
+        Home
+      </p>
 
+      <h2 className="mt-3 text-4xl font-black">
+        Good evening, Michael
+      </h2>
+
+      <p className="mt-4 text-zinc-400">
+        Ready to discover something new?
+      </p>
+
+      <button
+        onClick={() => setStage("vibe")}
+        className="mt-8 w-full rounded-full bg-green-500 py-4 text-lg font-bold text-black transition hover:bg-green-400"
+      >
+        Start Discovery Session
+      </button>
+
+      <div className="mt-10">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-bold">Quick Vibes</h3>
+
+          <button
+            onClick={() => setStage("vibe")}
+            className="text-sm text-green-500 transition hover:text-green-400"
+          >
+            See all
+          </button>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-4">
+          {quickVibes.map((vibe) => (
+            <button
+              key={vibe}
+              onClick={() => {
+                setSelectedVibe(vibe);
+                setSongIndex(0);
+                setAddedSongs(0);
+                setSavedSongs(0);
+                setSuperLikes(0);
+                setFeedback("");
+                setCardMotion("idle");
+                setStage("discover");
+              }}
+              className="rounded-2xl border border-white/10 bg-white/5 p-5 text-left text-lg font-semibold transition hover:border-green-500/60 hover:bg-green-500/10"
+            >
+              {vibe}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <h3 className="text-xl font-bold">Recent Sessions</h3>
+
+        <div className="mt-4 space-y-3">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="font-semibold">🌙 Late Night Drive</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              18 songs discovered
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="font-semibold">🏋️ Gym Mix</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              12 songs discovered
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="font-semibold">😌 Chill Finds</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              9 songs discovered
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button
+        onClick={() => setStage("landing")}
+        className="mt-8 text-sm text-zinc-500 transition hover:text-white"
+      >
+        Back to Landing
+      </button>
+    </div>
+  </section>
+)}
       {stage === "vibe" && (
         <section className="relative z-10 flex min-h-screen flex-col items-center justify-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
