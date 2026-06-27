@@ -288,7 +288,30 @@ export default function Home() {
           </div>
         </div>
       </div>
+       <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
+  <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
+    <div className="text-xl">🏠</div>
+    Home
+  </button>
 
+  <button
+    onClick={() => setStage("vibe")}
+    className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+  >
+    <div className="text-xl">🎵</div>
+    Discover
+  </button>
+
+  <button className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white">
+    <div className="text-xl">📚</div>
+    Library
+  </button>
+
+  <button className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white">
+    <div className="text-xl">👤</div>
+    Profile
+  </button>
+</div>
       <button
         onClick={() => setStage("landing")}
         className="mt-8 text-sm text-zinc-500 transition hover:text-white"
