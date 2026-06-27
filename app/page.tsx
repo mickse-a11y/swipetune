@@ -147,6 +147,45 @@ function SwipeTuneLogo() {
   );
 }
 
+type BottomNavProps = {
+  currentStage: Stage;
+  setStage: (stage: Stage) => void;
+};
+
+function BottomNav({ currentStage, setStage }: BottomNavProps) {
+  const navItems = [
+    { label: "Home", icon: "🏠", target: "home" },
+    { label: "Discover", icon: "🎵", target: "vibe" },
+    { label: "Library", icon: "📚", target: "library" },
+    { label: "Profile", icon: "👤", target: "profile" },
+  ] as const;
+
+  return (
+    <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs">
+      {navItems.map((item) => {
+        const isActive =
+          currentStage === item.target ||
+          (item.target === "vibe" && currentStage === "discover");
+
+        return (
+          <button
+            key={item.label}
+            onClick={() => setStage(item.target)}
+            className={`rounded-2xl px-2 py-3 transition ${
+              isActive
+                ? "bg-green-500/15 text-green-400"
+                : "text-zinc-400 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            <div className="text-xl">{item.icon}</div>
+            {item.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function Home() {
   const [stage, setStage] = useState<Stage>("landing");
   const [selectedVibe, setSelectedVibe] = useState("");
@@ -429,36 +468,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
-              <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
-                <div className="text-xl">🏠</div>
-                Home
-              </button>
-
-              <button
-                onClick={() => setStage("vibe")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">🎵</div>
-                Discover
-              </button>
-
-              <button
-                onClick={() => setStage("library")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">📚</div>
-                Library
-              </button>
-
-              <button
-                onClick={() => setStage("profile")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">👤</div>
-                Profile
-              </button>
-            </div>
+            <BottomNav currentStage={stage} setStage={setStage} />
 
             <button
               onClick={() => setStage("landing")}
@@ -599,36 +609,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
-              <button
-                onClick={() => setStage("home")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">🏠</div>
-                Home
-              </button>
-
-              <button
-                onClick={() => setStage("vibe")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">🎵</div>
-                Discover
-              </button>
-
-              <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
-                <div className="text-xl">📚</div>
-                Library
-              </button>
-
-              <button
-                onClick={() => setStage("profile")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">👤</div>
-                Profile
-              </button>
-            </div>
+            <BottomNav currentStage={stage} setStage={setStage} />
           </div>
         </section>
       )}
@@ -684,36 +665,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
-              <button
-                onClick={() => setStage("home")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">🏠</div>
-                Home
-              </button>
-
-              <button
-                onClick={() => setStage("vibe")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">🎵</div>
-                Discover
-              </button>
-
-              <button
-                onClick={() => setStage("library")}
-                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-              >
-                <div className="text-xl">📚</div>
-                Library
-              </button>
-
-              <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
-                <div className="text-xl">👤</div>
-                Profile
-              </button>
-            </div>
+            <BottomNav currentStage={stage} setStage={setStage} />
           </div>
         </section>
       )}
