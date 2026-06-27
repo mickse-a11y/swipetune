@@ -54,6 +54,62 @@ const songs = [
     year: "2024",
     gradient: "linear-gradient(135deg, #22c55e, #14b8a6)",
   },
+  {
+    title: "City Lights",
+    artist: "Kai Rivers",
+    genre: "Pop",
+    year: "2025",
+    gradient: "linear-gradient(135deg, #a855f7, #2563eb)",
+  },
+  {
+    title: "Run It Back",
+    artist: "Juno Carter",
+    genre: "Hip-Hop",
+    year: "2024",
+    gradient: "linear-gradient(135deg, #f97316, #eab308)",
+  },
+  {
+    title: "Rain Check",
+    artist: "Mila Grey",
+    genre: "Lo-Fi",
+    year: "2023",
+    gradient: "linear-gradient(135deg, #64748b, #0f172a)",
+  },
+  {
+    title: "Neon Hearts",
+    artist: "Astra Bloom",
+    genre: "Dance Pop",
+    year: "2025",
+    gradient: "linear-gradient(135deg, #ec4899, #22d3ee)",
+  },
+  {
+    title: "Slow Motion",
+    artist: "Dante Vale",
+    genre: "R&B",
+    year: "2024",
+    gradient: "linear-gradient(135deg, #7c3aed, #fb7185)",
+  },
+  {
+    title: "Open Road",
+    artist: "The Miles",
+    genre: "Indie Rock",
+    year: "2022",
+    gradient: "linear-gradient(135deg, #84cc16, #0ea5e9)",
+  },
+  {
+    title: "Focus Mode",
+    artist: "Echo Room",
+    genre: "Electronic",
+    year: "2025",
+    gradient: "linear-gradient(135deg, #14b8a6, #6366f1)",
+  },
+  {
+    title: "Last Train",
+    artist: "Velvet North",
+    genre: "Alternative Pop",
+    year: "2023",
+    gradient: "linear-gradient(135deg, #ef4444, #7f1d1d)",
+  },
 ];
 
 function SwipeTuneLogo() {
@@ -105,30 +161,34 @@ export default function Home() {
   const [cardMotion, setCardMotion] = useState<CardMotion>("idle");
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
   const previewTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   const currentSong = songs[songIndex];
+  const totalCollected =
+    playlistSongs.length + savedSongTitles.length + superLikedSongs.length;
+  const currentSessionActions = addedSongs + savedSongs + superLikes;
+
   function stopPreview() {
-  setIsPreviewPlaying(false);
-
-  if (previewTimeout.current) {
-    clearTimeout(previewTimeout.current);
-    previewTimeout.current = null;
-  }
-}
-
-function togglePreview() {
-  if (isPreviewPlaying) {
-    stopPreview();
-    return;
-  }
-
-  setIsPreviewPlaying(true);
-
-  previewTimeout.current = setTimeout(() => {
     setIsPreviewPlaying(false);
-    previewTimeout.current = null;
-  }, 5000);
-}
+
+    if (previewTimeout.current) {
+      clearTimeout(previewTimeout.current);
+      previewTimeout.current = null;
+    }
+  }
+
+  function togglePreview() {
+    if (isPreviewPlaying) {
+      stopPreview();
+      return;
+    }
+
+    setIsPreviewPlaying(true);
+
+    previewTimeout.current = setTimeout(() => {
+      setIsPreviewPlaying(false);
+      previewTimeout.current = null;
+    }, 5000);
+  }
 
   function getCardMotionStyles() {
     if (cardMotion === "left") {
@@ -150,6 +210,16 @@ function togglePreview() {
     return "translate-x-0 translate-y-0 rotate-0 scale-100 opacity-100";
   }
 
+  function clearLibrary() {
+    setPlaylistSongs([]);
+    setSavedSongTitles([]);
+    setSuperLikedSongs([]);
+    setAddedSongs(0);
+    setSavedSongs(0);
+    setSuperLikes(0);
+    stopPreview();
+  }
+
   function startDiscovery(vibe: string) {
     setSelectedVibe(vibe);
     setSongIndex(0);
@@ -166,9 +236,9 @@ function togglePreview() {
     if (cardMotion !== "idle") {
       return;
     }
-    
+
     stopPreview();
-    
+
     const songLabel = `${currentSong.title} — ${currentSong.artist}`;
 
     const messages = {
@@ -320,24 +390,40 @@ function togglePreview() {
               <h3 className="text-xl font-bold">Recent Sessions</h3>
 
               <div className="mt-4 space-y-3">
+                {selectedVibe ? (
+                  <div className="rounded-2xl border border-green-500/30 bg-green-500/10 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="font-semibold">{selectedVibe}</p>
+                      <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">
+                        Latest
+                      </span>
+                    </div>
+
+                    <p className="mt-1 text-sm text-zinc-400">
+                      {currentSessionActions} actions this session •{" "}
+                      {totalCollected} total collected
+                    </p>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p className="font-semibold">No recent session yet</p>
+                    <p className="mt-1 text-sm text-zinc-500">
+                      Start a discovery session to see your latest results here.
+                    </p>
+                  </div>
+                )}
+
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p className="font-semibold">🌙 Late Night Drive</p>
                   <p className="mt-1 text-sm text-zinc-500">
-                    18 songs discovered
+                    Demo playlist • 18 songs discovered
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p className="font-semibold">🏋️ Gym Mix</p>
                   <p className="mt-1 text-sm text-zinc-500">
-                    12 songs discovered
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="font-semibold">😌 Chill Finds</p>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    9 songs discovered
+                    Demo playlist • 12 songs discovered
                   </p>
                 </div>
               </div>
@@ -397,6 +483,38 @@ function togglePreview() {
               Songs you add, save, or super like during discovery will show up
               here.
             </p>
+
+            <div className="mt-6 grid grid-cols-3 gap-3">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+                <p className="text-2xl font-black text-green-500">
+                  {playlistSongs.length}
+                </p>
+                <p className="mt-1 text-xs text-zinc-500">Added</p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+                <p className="text-2xl font-black text-white">
+                  {savedSongTitles.length}
+                </p>
+                <p className="mt-1 text-xs text-zinc-500">Saved</p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+                <p className="text-2xl font-black text-yellow-400">
+                  {superLikedSongs.length}
+                </p>
+                <p className="mt-1 text-xs text-zinc-500">Stars</p>
+              </div>
+            </div>
+
+            {totalCollected > 0 && (
+              <button
+                onClick={clearLibrary}
+                className="mt-5 w-full rounded-full border border-red-500/20 bg-red-500/10 py-3 font-semibold text-red-300 transition hover:bg-red-500/20"
+              >
+                Clear Library
+              </button>
+            )}
 
             <div className="mt-10 space-y-6">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
@@ -531,7 +649,7 @@ function togglePreview() {
             <div className="mt-10 grid grid-cols-2 gap-4">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
                 <p className="text-3xl font-black text-green-500">
-                  {playlistSongs.length + savedSongTitles.length + superLikedSongs.length}
+                  {totalCollected}
                 </p>
                 <p className="mt-2 text-sm text-zinc-400">Songs Collected</p>
               </div>
@@ -691,14 +809,16 @@ function togglePreview() {
               <button
                 type="button"
                 onClick={togglePreview}
-  className={`mt-6 w-full rounded-full py-3 font-bold transition ${
-    isPreviewPlaying
-      ? "bg-green-500 text-black hover:bg-green-400"
-      : "bg-white text-black hover:bg-zinc-200"
-  }`}
->
-  {isPreviewPlaying ? "⏸ Playing preview..." : "▶ Play 30 sec preview"}
-</button>
+                className={`mt-6 w-full rounded-full py-3 font-bold transition ${
+                  isPreviewPlaying
+                    ? "bg-green-500 text-black hover:bg-green-400"
+                    : "bg-white text-black hover:bg-zinc-200"
+                }`}
+              >
+                {isPreviewPlaying
+                  ? "⏸ Playing preview..."
+                  : "▶ Play 30 sec preview"}
+              </button>
 
               <div className="mt-6 grid grid-cols-4 gap-3">
                 <button
@@ -748,15 +868,16 @@ function togglePreview() {
               }}
             />
           </div>
+
           <button
-  onClick={() => {
-    stopPreview();
-    setStage("summary");
-  }}
-  className="mt-6 w-full max-w-sm rounded-full border border-white/10 bg-white/5 py-3 font-semibold text-zinc-300 transition hover:bg-white/10 hover:text-white"
->
-  End Session
-</button>
+            onClick={() => {
+              stopPreview();
+              setStage("summary");
+            }}
+            className="mt-6 w-full max-w-sm rounded-full border border-white/10 bg-white/5 py-3 font-semibold text-zinc-300 transition hover:bg-white/10 hover:text-white"
+          >
+            End Session
+          </button>
         </section>
       )}
 
@@ -799,10 +920,24 @@ function togglePreview() {
           </button>
 
           <button
+            onClick={() => setStage("home")}
+            className="mt-4 w-full max-w-sm rounded-full border border-white/10 bg-white/5 py-4 text-lg font-semibold text-white transition hover:bg-white/10"
+          >
+            Back Home
+          </button>
+
+          <button
+            onClick={() => setStage("vibe")}
+            className="mt-4 w-full max-w-sm rounded-full border border-green-500/30 bg-green-500/10 py-4 text-lg font-semibold text-green-400 transition hover:bg-green-500/20"
+          >
+            Start Another Session
+          </button>
+
+          <button
             onClick={resetDemo}
             className="mt-4 w-full max-w-sm rounded-full bg-green-500 py-4 text-lg font-bold text-black transition hover:bg-green-400"
           >
-            Start Over
+            Reset Demo
           </button>
         </section>
       )}
