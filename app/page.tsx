@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 
-type Stage = "landing" |"home" | "vibe" | "discover" | "summary";
+type Stage =
+  | "landing"
+  | "home"
+  | "vibe"
+  | "discover"
+  | "summary"
+  | "library"
+  | "profile";
 type SwipeAction = "add" | "skip" | "superlike" | "save";
 type CardMotion = "idle" | "left" | "right" | "up" | "down";
 
@@ -302,15 +309,21 @@ export default function Home() {
     Discover
   </button>
 
-  <button className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white">
-    <div className="text-xl">📚</div>
-    Library
-  </button>
+ <button
+  onClick={() => setStage("library")}
+  className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+>
+  <div className="text-xl">📚</div>
+  Library
+</button>
 
-  <button className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white">
-    <div className="text-xl">👤</div>
-    Profile
-  </button>
+  <button
+  onClick={() => setStage("profile")}
+  className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+>
+  <div className="text-xl">👤</div>
+  Profile
+</button>
 </div>
       <button
         onClick={() => setStage("landing")}
@@ -318,6 +331,144 @@ export default function Home() {
       >
         Back to Landing
       </button>
+    </div>
+  </section>
+)}
+      {stage === "library" && (
+  <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
+    <div className="mx-auto w-full max-w-lg">
+      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
+        Library
+      </p>
+
+      <h2 className="mt-3 text-4xl font-black">Your music library</h2>
+
+      <p className="mt-4 text-zinc-400">
+        Playlists and saved songs from your discovery sessions will appear here.
+      </p>
+
+      <div className="mt-10 space-y-4">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+          <p className="text-lg font-bold">🌙 Late Night Drive</p>
+          <p className="mt-1 text-sm text-zinc-500">18 songs • 3 super likes</p>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+          <p className="text-lg font-bold">🏋️ Gym Mix</p>
+          <p className="mt-1 text-sm text-zinc-500">12 songs • 2 super likes</p>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+          <p className="text-lg font-bold">😌 Chill Finds</p>
+          <p className="mt-1 text-sm text-zinc-500">9 songs • 1 super like</p>
+        </div>
+      </div>
+
+      <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
+        <button
+          onClick={() => setStage("home")}
+          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+        >
+          <div className="text-xl">🏠</div>
+          Home
+        </button>
+
+        <button
+          onClick={() => setStage("vibe")}
+          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+        >
+          <div className="text-xl">🎵</div>
+          Discover
+        </button>
+
+        <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
+          <div className="text-xl">📚</div>
+          Library
+        </button>
+
+        <button
+          onClick={() => setStage("profile")}
+          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+        >
+          <div className="text-xl">👤</div>
+          Profile
+        </button>
+      </div>
+    </div>
+  </section>
+)}
+      {stage === "profile" && (
+  <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
+    <div className="mx-auto w-full max-w-lg">
+      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
+        Profile
+      </p>
+
+      <h2 className="mt-3 text-4xl font-black">Michael’s stats</h2>
+
+      <p className="mt-4 text-zinc-400">
+        Track your music discovery progress as you build playlists.
+      </p>
+
+      <div className="mt-10 grid grid-cols-2 gap-4">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+          <p className="text-3xl font-black text-green-500">39</p>
+          <p className="mt-2 text-sm text-zinc-400">Songs Discovered</p>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+          <p className="text-3xl font-black text-yellow-400">6</p>
+          <p className="mt-2 text-sm text-zinc-400">Super Likes</p>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+          <p className="text-3xl font-black text-white">3</p>
+          <p className="mt-2 text-sm text-zinc-400">Playlists</p>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+          <p className="text-3xl font-black text-purple-400">Indie</p>
+          <p className="mt-2 text-sm text-zinc-400">Top Vibe</p>
+        </div>
+      </div>
+
+      <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-5">
+        <p className="font-bold">Favorite discovery mode</p>
+        <p className="mt-2 text-sm text-zinc-400">
+          You seem to like late-night, chill, and gym sessions the most.
+        </p>
+      </div>
+
+      <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
+        <button
+          onClick={() => setStage("home")}
+          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+        >
+          <div className="text-xl">🏠</div>
+          Home
+        </button>
+
+        <button
+          onClick={() => setStage("vibe")}
+          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+        >
+          <div className="text-xl">🎵</div>
+          Discover
+        </button>
+
+        <button
+          onClick={() => setStage("library")}
+          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+        >
+          <div className="text-xl">📚</div>
+          Library
+        </button>
+
+        <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
+          <div className="text-xl">👤</div>
+          Profile
+        </button>
+      </div>
     </div>
   </section>
 )}
