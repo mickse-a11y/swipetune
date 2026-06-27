@@ -4,6 +4,7 @@ import { useState } from "react";
 
 type Stage = "landing" | "vibe" | "discover" | "summary";
 type SwipeAction = "add" | "skip" | "superlike" | "save";
+type CardMotion = "idle" | "left" | "right" | "up" | "down";
 
 const vibes = [
   "🌙 Late Night",
@@ -53,8 +54,29 @@ export default function Home() {
   const [savedSongs, setSavedSongs] = useState(0);
   const [superLikes, setSuperLikes] = useState(0);
   const [feedback, setFeedback] = useState("");
+  const [cardMotion, setCardMotion] = useState<CardMotion>("idle");
 
   const currentSong = songs[songIndex];
+
+  function getCardMotionStyles() {
+    if (cardMotion === "left") {
+      return "-translate-x-[120%] -rotate-12 opacity-0";
+    }
+
+    if (cardMotion === "right") {
+      return "translate-x-[120%] rotate-12 opacity-0";
+    }
+
+    if (cardMotion === "up") {
+      return "-translate-y-[120%] scale-105 opacity-0";
+    }
+
+    if (cardMotion === "down") {
+      return "translate-y-20 scale-95 opacity-0";
+    }
+
+    return "translate-x-0 translate-y-0 rotate-0 scale-100 opacity-100";
+  }
 
   function nextSong(action: SwipeAction) {
     const messages = {
@@ -64,7 +86,15 @@ export default function Home() {
       save: "💾 Saved for later",
     };
 
+    const motions = {
+      add: "right",
+      skip: "left",
+      superlike: "up",
+      save: "down",
+    } as const;
+
     setFeedback(messages[action]);
+    setCardMotion(motions[action]);
 
     if (action === "add") {
       setAddedSongs((count) => count + 1);
@@ -81,13 +111,14 @@ export default function Home() {
 
     setTimeout(() => {
       setFeedback("");
+      setCardMotion("idle");
 
       if (songIndex === songs.length - 1) {
         setStage("summary");
       } else {
         setSongIndex((index) => index + 1);
       }
-    }, 600);
+    }, 650);
   }
 
   function resetDemo() {
@@ -98,6 +129,7 @@ export default function Home() {
     setSavedSongs(0);
     setSuperLikes(0);
     setFeedback("");
+    setCardMotion("idle");
   }
 
   return (
@@ -212,9 +244,7 @@ export default function Home() {
             )}
 
             <div
-              className={`rounded-[2rem] border border-white/10 bg-zinc-950/80 p-5 shadow-2xl backdrop-blur transition duration-300 ${
-                feedback ? "scale-95 opacity-80" : "scale-100 opacity-100"
-              }`}
+              className={`rounded-[2rem] border border-white/10 bg-zinc-950/80 p-5 shadow-2xl backdrop-blur transition-all duration-500 ease-out ${getCardMotionStyles()}`}
             >
               <div
                 className="flex aspect-square items-center justify-center rounded-[1.5rem] shadow-xl"
