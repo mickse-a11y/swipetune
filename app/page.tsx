@@ -152,6 +152,29 @@ type BottomNavProps = {
   setStage: (stage: Stage) => void;
 };
 
+function MiniHeader() {
+  return (
+    <div className="mb-8 flex items-center justify-between rounded-full border border-white/10 bg-white/5 px-4 py-3">
+      <div className="flex items-center gap-2">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-500/15 text-lg">
+          🎵
+        </div>
+
+        <div>
+          <p className="text-sm font-black leading-none">
+            Swipe<span className="text-green-500">Tune</span>
+          </p>
+          <p className="mt-1 text-xs text-zinc-500">Prototype Mode</p>
+        </div>
+      </div>
+
+      <span className="rounded-full bg-green-500/15 px-3 py-1 text-xs font-bold text-green-400">
+        MVP
+      </span>
+    </div>
+  );
+}
+
 function BottomNav({ currentStage, setStage }: BottomNavProps) {
   const navItems = [
     { label: "Home", icon: "🏠", target: "home" },
@@ -383,6 +406,8 @@ export default function Home() {
       {stage === "home" && (
         <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
           <div className="mx-auto w-full max-w-lg">
+            <MiniHeader />
+
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
               Home
             </p>
@@ -483,6 +508,8 @@ export default function Home() {
       {stage === "library" && (
         <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
           <div className="mx-auto w-full max-w-lg">
+            <MiniHeader />
+
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
               Library
             </p>
@@ -617,6 +644,8 @@ export default function Home() {
       {stage === "profile" && (
         <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
           <div className="mx-auto w-full max-w-lg">
+            <MiniHeader />
+
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
               Profile
             </p>
