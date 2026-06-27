@@ -748,6 +748,15 @@ function togglePreview() {
               }}
             />
           </div>
+          <button
+  onClick={() => {
+    stopPreview();
+    setStage("summary");
+  }}
+  className="mt-6 w-full max-w-sm rounded-full border border-white/10 bg-white/5 py-3 font-semibold text-zinc-300 transition hover:bg-white/10 hover:text-white"
+>
+  End Session
+</button>
         </section>
       )}
 
