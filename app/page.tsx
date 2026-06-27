@@ -46,7 +46,40 @@ const songs = [
     gradient: "linear-gradient(135deg, #22c55e, #14b8a6)",
   },
 ];
+function SwipeTuneLogo() {
+  return (
+    <div className="relative mb-8 flex h-28 w-28 items-center justify-center">
+      <div className="absolute h-28 w-28 rounded-full bg-green-500/20 blur-xl" />
 
+      <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-zinc-700 via-zinc-950 to-black shadow-2xl ring-1 ring-white/10">
+        <div className="absolute h-20 w-20 rounded-full border border-white/10" />
+        <div className="absolute h-14 w-14 rounded-full border border-white/10" />
+        <div className="absolute h-8 w-8 rounded-full bg-black ring-8 ring-zinc-800" />
+        <div className="relative h-3 w-3 rounded-full bg-green-500" />
+      </div>
+
+      <svg
+        className="absolute -right-3 top-1 h-12 w-12 rotate-12"
+        viewBox="0 0 48 48"
+        fill="none"
+      >
+        <path
+          d="M7 28C13 12 30 8 40 18"
+          stroke="#1ED760"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <path
+          d="M36 9L42 18L31 20"
+          stroke="#1ED760"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+}
 export default function Home() {
   const [stage, setStage] = useState<Stage>("landing");
   const [selectedVibe, setSelectedVibe] = useState("");
@@ -140,11 +173,7 @@ export default function Home() {
 
       {stage === "landing" && (
         <section className="relative z-10 flex min-h-screen flex-col items-center justify-center">
-          <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-zinc-700 to-black shadow-2xl ring-1 ring-white/10">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black ring-8 ring-zinc-800">
-              <div className="h-3 w-3 rounded-full bg-green-500" />
-            </div>
-          </div>
+          <SwipeTuneLogo />
 
           <p className="mb-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-zinc-300">
             Swipe. Discover. Build your playlist.
