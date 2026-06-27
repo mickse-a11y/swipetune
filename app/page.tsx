@@ -737,7 +737,7 @@ export default function Home() {
             )}
 
             <div
-              className={`rounded-[2rem] border border-white/10 bg-zinc-950/80 p-5 shadow-2xl backdrop-blur transition-all duration-500 ease-out ${getCardMotionStyles()}`}
+              className={`rounded-[2rem] border border-white/10 bg-gradient-to-b from-zinc-900/90 to-black/90 p-5 shadow-2xl shadow-green-500/10 backdrop-blur transition-all duration-500 ease-out ${getCardMotionStyles()}`}
             >
               <div
                 className="flex aspect-square items-center justify-center rounded-[1.5rem] shadow-xl"
@@ -749,14 +749,24 @@ export default function Home() {
               </div>
 
               <div className="mt-6">
-                <h3 className="text-3xl font-black">{currentSong.title}</h3>
-                <p className="mt-1 text-lg text-zinc-400">
-                  {currentSong.artist}
-                </p>
-                <p className="mt-2 text-sm text-zinc-500">
-                  {currentSong.genre} • {currentSong.year}
-                </p>
-              </div>
+  <div className="mb-4 flex items-center justify-between">
+    <span className="rounded-full bg-green-500/15 px-3 py-1 text-xs font-bold text-green-400">
+      {currentSong.genre}
+    </span>
+
+    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-400">
+      {currentSong.year}
+    </span>
+  </div>
+
+  <h3 className="text-3xl font-black tracking-tight">
+    {currentSong.title}
+  </h3>
+
+  <p className="mt-1 text-lg text-zinc-400">
+    by {currentSong.artist}
+  </p>
+</div>
 
               <button
                 type="button"
