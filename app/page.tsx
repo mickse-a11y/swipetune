@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 type Stage = "landing" | "vibe" | "discover" | "summary";
+type SwipeAction = "add" | "skip" | "superlike" | "save";
 
 const vibes = [
   "🌙 Late Night",
@@ -49,13 +50,28 @@ export default function Home() {
   const [selectedVibe, setSelectedVibe] = useState("");
   const [songIndex, setSongIndex] = useState(0);
   const [addedSongs, setAddedSongs] = useState(0);
+  const [savedSongs, setSavedSongs] = useState(0);
   const [superLikes, setSuperLikes] = useState(0);
+  const [feedback, setFeedback] = useState("");
 
   const currentSong = songs[songIndex];
 
-  function nextSong(action: "add" | "skip" | "superlike" | "save") {
+  function nextSong(action: SwipeAction) {
+    const messages = {
+      add: "✅ Added to playlist",
+      skip: "🚫 Not interested",
+      superlike: "⭐ Super liked",
+      save: "💾 Saved for later",
+    };
+
+    setFeedback(messages[action]);
+
     if (action === "add") {
       setAddedSongs((count) => count + 1);
+    }
+
+    if (action === "save") {
+      setSavedSongs((count) => count + 1);
     }
 
     if (action === "superlike") {
@@ -63,11 +79,15 @@ export default function Home() {
       setSuperLikes((count) => count + 1);
     }
 
-    if (songIndex === songs.length - 1) {
-      setStage("summary");
-    } else {
-      setSongIndex((index) => index + 1);
-    }
+    setTimeout(() => {
+      setFeedback("");
+
+      if (songIndex === songs.length - 1) {
+        setStage("summary");
+      } else {
+        setSongIndex((index) => index + 1);
+      }
+    }, 600);
   }
 
   function resetDemo() {
@@ -75,7 +95,9 @@ export default function Home() {
     setSelectedVibe("");
     setSongIndex(0);
     setAddedSongs(0);
+    setSavedSongs(0);
     setSuperLikes(0);
+    setFeedback("");
   }
 
   return (
@@ -177,56 +199,79 @@ export default function Home() {
             <h2 className="text-2xl font-bold">{selectedVibe}</h2>
           </div>
 
-          <div className="w-full max-w-sm rounded-[2rem] border border-white/10 bg-zinc-950/80 p-5 shadow-2xl backdrop-blur">
-            <div
-              className="flex aspect-square items-center justify-center rounded-[1.5rem] shadow-xl"
-              style={{ background: currentSong.gradient }}
-            >
-              <div className="flex h-32 w-32 items-center justify-center rounded-full bg-black/80 ring-[18px] ring-black/30">
-                <div className="h-5 w-5 rounded-full bg-green-500" />
+          <div className="mb-4 flex w-full max-w-sm justify-between text-xs font-semibold uppercase tracking-widest text-zinc-500">
+            <span>← Skip</span>
+            <span>Right adds →</span>
+          </div>
+
+          <div className="relative w-full max-w-sm">
+            {feedback && (
+              <div className="absolute left-1/2 top-8 z-20 -translate-x-1/2 rounded-full border border-white/10 bg-black/80 px-5 py-2 text-sm font-bold text-white shadow-xl backdrop-blur">
+                {feedback}
               </div>
-            </div>
+            )}
 
-            <div className="mt-6">
-              <h3 className="text-3xl font-black">{currentSong.title}</h3>
-              <p className="mt-1 text-lg text-zinc-400">{currentSong.artist}</p>
-              <p className="mt-2 text-sm text-zinc-500">
-                {currentSong.genre} • {currentSong.year}
-              </p>
-            </div>
-
-            <button className="mt-6 w-full rounded-full bg-white py-3 font-bold text-black transition hover:bg-zinc-200">
-              ▶ Play 30 sec preview
-            </button>
-
-            <div className="mt-6 grid grid-cols-4 gap-3">
-              <button
-                onClick={() => nextSong("skip")}
-                className="rounded-2xl bg-red-500/15 py-4 text-xl transition hover:bg-red-500/25"
+            <div
+              className={`rounded-[2rem] border border-white/10 bg-zinc-950/80 p-5 shadow-2xl backdrop-blur transition duration-300 ${
+                feedback ? "scale-95 opacity-80" : "scale-100 opacity-100"
+              }`}
+            >
+              <div
+                className="flex aspect-square items-center justify-center rounded-[1.5rem] shadow-xl"
+                style={{ background: currentSong.gradient }}
               >
-                🚫
+                <div className="flex h-32 w-32 items-center justify-center rounded-full bg-black/80 ring-[18px] ring-black/30">
+                  <div className="h-5 w-5 rounded-full bg-green-500" />
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <h3 className="text-3xl font-black">{currentSong.title}</h3>
+                <p className="mt-1 text-lg text-zinc-400">
+                  {currentSong.artist}
+                </p>
+                <p className="mt-2 text-sm text-zinc-500">
+                  {currentSong.genre} • {currentSong.year}
+                </p>
+              </div>
+
+              <button className="mt-6 w-full rounded-full bg-white py-3 font-bold text-black transition hover:bg-zinc-200">
+                ▶ Play 30 sec preview
               </button>
 
-              <button
-                onClick={() => nextSong("save")}
-                className="rounded-2xl bg-white/5 py-4 text-xl transition hover:bg-white/10"
-              >
-                💾
-              </button>
+              <div className="mt-6 grid grid-cols-4 gap-3">
+                <button
+                  onClick={() => nextSong("skip")}
+                  className="rounded-2xl bg-red-500/15 py-4 text-xl transition hover:bg-red-500/25"
+                  title="Not Interested"
+                >
+                  🚫
+                </button>
 
-              <button
-                onClick={() => nextSong("add")}
-                className="rounded-2xl bg-green-500/20 py-4 text-xl transition hover:bg-green-500/30"
-              >
-                ➕
-              </button>
+                <button
+                  onClick={() => nextSong("save")}
+                  className="rounded-2xl bg-white/5 py-4 text-xl transition hover:bg-white/10"
+                  title="Save for Later"
+                >
+                  💾
+                </button>
 
-              <button
-                onClick={() => nextSong("superlike")}
-                className="rounded-2xl bg-yellow-500/20 py-4 text-xl transition hover:bg-yellow-500/30"
-              >
-                ⭐
-              </button>
+                <button
+                  onClick={() => nextSong("add")}
+                  className="rounded-2xl bg-green-500/20 py-4 text-xl transition hover:bg-green-500/30"
+                  title="Add to Playlist"
+                >
+                  ➕
+                </button>
+
+                <button
+                  onClick={() => nextSong("superlike")}
+                  className="rounded-2xl bg-yellow-500/20 py-4 text-xl transition hover:bg-yellow-500/30"
+                  title="Super Like"
+                >
+                  ⭐
+                </button>
+              </div>
             </div>
           </div>
 
@@ -257,17 +302,22 @@ export default function Home() {
             You just finished your first SwipeTune discovery session.
           </p>
 
-          <div className="mt-10 grid w-full max-w-sm grid-cols-2 gap-4">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-              <p className="text-4xl font-black text-green-500">{addedSongs}</p>
-              <p className="mt-2 text-sm text-zinc-400">Songs Added</p>
+          <div className="mt-10 grid w-full max-w-sm grid-cols-3 gap-4">
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <p className="text-3xl font-black text-green-500">{addedSongs}</p>
+              <p className="mt-2 text-xs text-zinc-400">Added</p>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-              <p className="text-4xl font-black text-yellow-400">
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <p className="text-3xl font-black text-white">{savedSongs}</p>
+              <p className="mt-2 text-xs text-zinc-400">Saved</p>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <p className="text-3xl font-black text-yellow-400">
                 {superLikes}
               </p>
-              <p className="mt-2 text-sm text-zinc-400">Super Likes</p>
+              <p className="mt-2 text-xs text-zinc-400">Stars</p>
             </div>
           </div>
 
