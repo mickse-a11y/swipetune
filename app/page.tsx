@@ -103,6 +103,7 @@ export default function Home() {
   const [superLikedSongs, setSuperLikedSongs] = useState<string[]>([]);
   const [feedback, setFeedback] = useState("");
   const [cardMotion, setCardMotion] = useState<CardMotion>("idle");
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
 
   const currentSong = songs[songIndex];
 
@@ -134,6 +135,7 @@ export default function Home() {
     setSuperLikes(0);
     setFeedback("");
     setCardMotion("idle");
+    setIsPreviewPlaying(false);
     setStage("discover");
   }
 
@@ -141,7 +143,8 @@ export default function Home() {
     if (cardMotion !== "idle") {
       return;
     }
-
+    setIsPreviewPlaying(false);
+    
     const songLabel = `${currentSong.title} — ${currentSong.artist}`;
 
     const messages = {
@@ -200,6 +203,7 @@ export default function Home() {
     setSuperLikedSongs([]);
     setFeedback("");
     setCardMotion("idle");
+    setIsPreviewPlaying(false);
   }
 
   return (
@@ -660,9 +664,16 @@ export default function Home() {
                 </p>
               </div>
 
-              <button className="mt-6 w-full rounded-full bg-white py-3 font-bold text-black transition hover:bg-zinc-200">
-                ▶ Play 30 sec preview
-              </button>
+              <button
+  onClick={() => setIsPreviewPlaying((playing) => !playing)}
+  className={`mt-6 w-full rounded-full py-3 font-bold transition ${
+    isPreviewPlaying
+      ? "bg-green-500 text-black hover:bg-green-400"
+      : "bg-white text-black hover:bg-zinc-200"
+  }`}
+>
+  {isPreviewPlaying ? "⏸ Playing preview..." : "▶ Play 30 sec preview"}
+</button>
 
               <div className="mt-6 grid grid-cols-4 gap-3">
                 <button
