@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type Stage =
   | "landing"
@@ -104,8 +104,31 @@ export default function Home() {
   const [feedback, setFeedback] = useState("");
   const [cardMotion, setCardMotion] = useState<CardMotion>("idle");
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
-
+  const previewTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
   const currentSong = songs[songIndex];
+  function stopPreview() {
+  setIsPreviewPlaying(false);
+
+  if (previewTimeout.current) {
+    clearTimeout(previewTimeout.current);
+    previewTimeout.current = null;
+  }
+}
+
+function togglePreview() {
+  if (isPreviewPlaying) {
+    stopPreview();
+    return;
+  }
+
+  setIsPreviewPlaying(true);
+
+  previewTimeout.current = setTimeout(() => {
+    setIsPreviewPlaying(false);
+    previewTimeout.current = null;
+  }, 5000);
+}
 
   function getCardMotionStyles() {
     if (cardMotion === "left") {
@@ -135,7 +158,7 @@ export default function Home() {
     setSuperLikes(0);
     setFeedback("");
     setCardMotion("idle");
-    setIsPreviewPlaying(false);
+    stopPreview();
     setStage("discover");
   }
 
@@ -143,7 +166,8 @@ export default function Home() {
     if (cardMotion !== "idle") {
       return;
     }
-    setIsPreviewPlaying(false);
+    
+    stopPreview();
     
     const songLabel = `${currentSong.title} — ${currentSong.artist}`;
 
@@ -203,7 +227,7 @@ export default function Home() {
     setSuperLikedSongs([]);
     setFeedback("");
     setCardMotion("idle");
-    setIsPreviewPlaying(false);
+    stopPreview();
   }
 
   return (
@@ -665,7 +689,8 @@ export default function Home() {
               </div>
 
               <button
-  onClick={() => setIsPreviewPlaying((playing) => !playing)}
+                type="button"
+                onClick={togglePreview}
   className={`mt-6 w-full rounded-full py-3 font-bold transition ${
     isPreviewPlaying
       ? "bg-green-500 text-black hover:bg-green-400"
