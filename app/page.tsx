@@ -10,6 +10,7 @@ type Stage =
   | "summary"
   | "library"
   | "profile";
+
 type SwipeAction = "add" | "skip" | "superlike" | "save";
 type CardMotion = "idle" | "left" | "right" | "up" | "down";
 
@@ -21,6 +22,7 @@ const vibes = [
   "😌 Chill",
   "🎉 Party",
 ];
+
 const quickVibes = vibes.slice(0, 6);
 
 const songs = [
@@ -53,6 +55,7 @@ const songs = [
     gradient: "linear-gradient(135deg, #22c55e, #14b8a6)",
   },
 ];
+
 function SwipeTuneLogo() {
   return (
     <div className="relative mb-8 flex h-28 w-28 items-center justify-center">
@@ -87,6 +90,7 @@ function SwipeTuneLogo() {
     </div>
   );
 }
+
 export default function Home() {
   const [stage, setStage] = useState<Stage>("landing");
   const [selectedVibe, setSelectedVibe] = useState("");
@@ -94,6 +98,9 @@ export default function Home() {
   const [addedSongs, setAddedSongs] = useState(0);
   const [savedSongs, setSavedSongs] = useState(0);
   const [superLikes, setSuperLikes] = useState(0);
+  const [playlistSongs, setPlaylistSongs] = useState<string[]>([]);
+  const [savedSongTitles, setSavedSongTitles] = useState<string[]>([]);
+  const [superLikedSongs, setSuperLikedSongs] = useState<string[]>([]);
   const [feedback, setFeedback] = useState("");
   const [cardMotion, setCardMotion] = useState<CardMotion>("idle");
 
@@ -119,7 +126,24 @@ export default function Home() {
     return "translate-x-0 translate-y-0 rotate-0 scale-100 opacity-100";
   }
 
+  function startDiscovery(vibe: string) {
+    setSelectedVibe(vibe);
+    setSongIndex(0);
+    setAddedSongs(0);
+    setSavedSongs(0);
+    setSuperLikes(0);
+    setFeedback("");
+    setCardMotion("idle");
+    setStage("discover");
+  }
+
   function nextSong(action: SwipeAction) {
+    if (cardMotion !== "idle") {
+      return;
+    }
+
+    const songLabel = `${currentSong.title} — ${currentSong.artist}`;
+
     const messages = {
       add: "✅ Added to playlist",
       skip: "🚫 Not interested",
@@ -139,15 +163,17 @@ export default function Home() {
 
     if (action === "add") {
       setAddedSongs((count) => count + 1);
+      setPlaylistSongs((songs) => [...songs, songLabel]);
     }
 
     if (action === "save") {
       setSavedSongs((count) => count + 1);
+      setSavedSongTitles((songs) => [...songs, songLabel]);
     }
 
     if (action === "superlike") {
-      setAddedSongs((count) => count + 1);
       setSuperLikes((count) => count + 1);
+      setSuperLikedSongs((songs) => [...songs, songLabel]);
     }
 
     setTimeout(() => {
@@ -169,6 +195,9 @@ export default function Home() {
     setAddedSongs(0);
     setSavedSongs(0);
     setSuperLikes(0);
+    setPlaylistSongs([]);
+    setSavedSongTitles([]);
+    setSuperLikedSongs([]);
     setFeedback("");
     setCardMotion("idle");
   }
@@ -213,265 +242,336 @@ export default function Home() {
           </div>
         </section>
       )}
+
       {stage === "home" && (
-  <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
-    <div className="mx-auto w-full max-w-lg">
-      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
-        Home
-      </p>
+        <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
+          <div className="mx-auto w-full max-w-lg">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
+              Home
+            </p>
 
-      <h2 className="mt-3 text-4xl font-black">
-        Good evening, Michael
-      </h2>
+            <h2 className="mt-3 text-4xl font-black">Good evening, Michael</h2>
 
-      <p className="mt-4 text-zinc-400">
-        Ready to discover something new?
-      </p>
+            <p className="mt-4 text-zinc-400">
+              Ready to discover something new?
+            </p>
 
-      <button
-        onClick={() => setStage("vibe")}
-        className="mt-8 w-full rounded-full bg-green-500 py-4 text-lg font-bold text-black transition hover:bg-green-400"
-      >
-        Start Discovery Session
-      </button>
-
-      <div className="mt-10">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold">Quick Vibes</h3>
-
-          <button
-            onClick={() => setStage("vibe")}
-            className="text-sm text-green-500 transition hover:text-green-400"
-          >
-            See all
-          </button>
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          {quickVibes.map((vibe) => (
             <button
-              key={vibe}
-              onClick={() => {
-                setSelectedVibe(vibe);
-                setSongIndex(0);
-                setAddedSongs(0);
-                setSavedSongs(0);
-                setSuperLikes(0);
-                setFeedback("");
-                setCardMotion("idle");
-                setStage("discover");
-              }}
-              className="rounded-2xl border border-white/10 bg-white/5 p-5 text-left text-lg font-semibold transition hover:border-green-500/60 hover:bg-green-500/10"
+              onClick={() => setStage("vibe")}
+              className="mt-8 w-full rounded-full bg-green-500 py-4 text-lg font-bold text-black transition hover:bg-green-400"
             >
-              {vibe}
+              Start Discovery Session
             </button>
-          ))}
-        </div>
-      </div>
 
-      <div className="mt-10">
-        <h3 className="text-xl font-bold">Recent Sessions</h3>
+            <div className="mt-10">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold">Quick Vibes</h3>
 
-        <div className="mt-4 space-y-3">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="font-semibold">🌙 Late Night Drive</p>
-            <p className="mt-1 text-sm text-zinc-500">
-              18 songs discovered
-            </p>
+                <button
+                  onClick={() => setStage("vibe")}
+                  className="text-sm text-green-500 transition hover:text-green-400"
+                >
+                  See all
+                </button>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                {quickVibes.map((vibe) => (
+                  <button
+                    key={vibe}
+                    onClick={() => startDiscovery(vibe)}
+                    className="rounded-2xl border border-white/10 bg-white/5 p-5 text-left text-lg font-semibold transition hover:border-green-500/60 hover:bg-green-500/10"
+                  >
+                    {vibe}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-10">
+              <h3 className="text-xl font-bold">Recent Sessions</h3>
+
+              <div className="mt-4 space-y-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="font-semibold">🌙 Late Night Drive</p>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    18 songs discovered
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="font-semibold">🏋️ Gym Mix</p>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    12 songs discovered
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="font-semibold">😌 Chill Finds</p>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    9 songs discovered
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
+              <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
+                <div className="text-xl">🏠</div>
+                Home
+              </button>
+
+              <button
+                onClick={() => setStage("vibe")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">🎵</div>
+                Discover
+              </button>
+
+              <button
+                onClick={() => setStage("library")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">📚</div>
+                Library
+              </button>
+
+              <button
+                onClick={() => setStage("profile")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">👤</div>
+                Profile
+              </button>
+            </div>
+
+            <button
+              onClick={() => setStage("landing")}
+              className="mt-8 text-sm text-zinc-500 transition hover:text-white"
+            >
+              Back to Landing
+            </button>
           </div>
+        </section>
+      )}
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="font-semibold">🏋️ Gym Mix</p>
-            <p className="mt-1 text-sm text-zinc-500">
-              12 songs discovered
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="font-semibold">😌 Chill Finds</p>
-            <p className="mt-1 text-sm text-zinc-500">
-              9 songs discovered
-            </p>
-          </div>
-        </div>
-      </div>
-       <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
-  <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
-    <div className="text-xl">🏠</div>
-    Home
-  </button>
-
-  <button
-    onClick={() => setStage("vibe")}
-    className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-  >
-    <div className="text-xl">🎵</div>
-    Discover
-  </button>
-
- <button
-  onClick={() => setStage("library")}
-  className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
->
-  <div className="text-xl">📚</div>
-  Library
-</button>
-
-  <button
-  onClick={() => setStage("profile")}
-  className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
->
-  <div className="text-xl">👤</div>
-  Profile
-</button>
-</div>
-      <button
-        onClick={() => setStage("landing")}
-        className="mt-8 text-sm text-zinc-500 transition hover:text-white"
-      >
-        Back to Landing
-      </button>
-    </div>
-  </section>
-)}
       {stage === "library" && (
-  <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
-    <div className="mx-auto w-full max-w-lg">
-      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
-        Library
-      </p>
+        <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
+          <div className="mx-auto w-full max-w-lg">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
+              Library
+            </p>
 
-      <h2 className="mt-3 text-4xl font-black">Your music library</h2>
+            <h2 className="mt-3 text-4xl font-black">Your music library</h2>
 
-      <p className="mt-4 text-zinc-400">
-        Playlists and saved songs from your discovery sessions will appear here.
-      </p>
+            <p className="mt-4 text-zinc-400">
+              Songs you add, save, or super like during discovery will show up
+              here.
+            </p>
 
-      <div className="mt-10 space-y-4">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-lg font-bold">🌙 Late Night Drive</p>
-          <p className="mt-1 text-sm text-zinc-500">18 songs • 3 super likes</p>
-        </div>
+            <div className="mt-10 space-y-6">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <div className="flex items-center justify-between">
+                  <p className="text-lg font-bold">➕ Added to playlist</p>
+                  <p className="text-sm text-green-400">
+                    {playlistSongs.length}
+                  </p>
+                </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-lg font-bold">🏋️ Gym Mix</p>
-          <p className="mt-1 text-sm text-zinc-500">12 songs • 2 super likes</p>
-        </div>
+                {playlistSongs.length > 0 ? (
+                  <div className="mt-4 space-y-3">
+                    {playlistSongs.map((song, index) => (
+                      <div
+                        key={`${song}-${index}`}
+                        className="rounded-2xl bg-black/30 p-4"
+                      >
+                        <p className="font-semibold">{song}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm text-zinc-500">
+                    No added songs yet. Add songs during discovery and they will
+                    appear here.
+                  </p>
+                )}
+              </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-lg font-bold">😌 Chill Finds</p>
-          <p className="mt-1 text-sm text-zinc-500">9 songs • 1 super like</p>
-        </div>
-      </div>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <div className="flex items-center justify-between">
+                  <p className="text-lg font-bold">💾 Saved for later</p>
+                  <p className="text-sm text-white">
+                    {savedSongTitles.length}
+                  </p>
+                </div>
 
-      <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
-        <button
-          onClick={() => setStage("home")}
-          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-        >
-          <div className="text-xl">🏠</div>
-          Home
-        </button>
+                {savedSongTitles.length > 0 ? (
+                  <div className="mt-4 space-y-3">
+                    {savedSongTitles.map((song, index) => (
+                      <div
+                        key={`${song}-${index}`}
+                        className="rounded-2xl bg-black/30 p-4"
+                      >
+                        <p className="font-semibold">{song}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm text-zinc-500">
+                    No saved songs yet. Save songs during discovery and they
+                    will appear here.
+                  </p>
+                )}
+              </div>
 
-        <button
-          onClick={() => setStage("vibe")}
-          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-        >
-          <div className="text-xl">🎵</div>
-          Discover
-        </button>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <div className="flex items-center justify-between">
+                  <p className="text-lg font-bold">⭐ Super likes</p>
+                  <p className="text-sm text-yellow-400">
+                    {superLikedSongs.length}
+                  </p>
+                </div>
 
-        <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
-          <div className="text-xl">📚</div>
-          Library
-        </button>
+                {superLikedSongs.length > 0 ? (
+                  <div className="mt-4 space-y-3">
+                    {superLikedSongs.map((song, index) => (
+                      <div
+                        key={`${song}-${index}`}
+                        className="rounded-2xl bg-black/30 p-4"
+                      >
+                        <p className="font-semibold">{song}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm text-zinc-500">
+                    No super liked songs yet. Star songs during discovery and
+                    they will appear here.
+                  </p>
+                )}
+              </div>
+            </div>
 
-        <button
-          onClick={() => setStage("profile")}
-          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-        >
-          <div className="text-xl">👤</div>
-          Profile
-        </button>
-      </div>
-    </div>
-  </section>
-)}
+            <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
+              <button
+                onClick={() => setStage("home")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">🏠</div>
+                Home
+              </button>
+
+              <button
+                onClick={() => setStage("vibe")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">🎵</div>
+                Discover
+              </button>
+
+              <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
+                <div className="text-xl">📚</div>
+                Library
+              </button>
+
+              <button
+                onClick={() => setStage("profile")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">👤</div>
+                Profile
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {stage === "profile" && (
-  <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
-    <div className="mx-auto w-full max-w-lg">
-      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
-        Profile
-      </p>
+        <section className="relative z-10 flex min-h-screen flex-col justify-center py-10">
+          <div className="mx-auto w-full max-w-lg">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
+              Profile
+            </p>
 
-      <h2 className="mt-3 text-4xl font-black">Michael’s stats</h2>
+            <h2 className="mt-3 text-4xl font-black">Michael’s stats</h2>
 
-      <p className="mt-4 text-zinc-400">
-        Track your music discovery progress as you build playlists.
-      </p>
+            <p className="mt-4 text-zinc-400">
+              Track your music discovery progress as you build playlists.
+            </p>
 
-      <div className="mt-10 grid grid-cols-2 gap-4">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-3xl font-black text-green-500">39</p>
-          <p className="mt-2 text-sm text-zinc-400">Songs Discovered</p>
-        </div>
+            <div className="mt-10 grid grid-cols-2 gap-4">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <p className="text-3xl font-black text-green-500">
+                  {playlistSongs.length + savedSongTitles.length + superLikedSongs.length}
+                </p>
+                <p className="mt-2 text-sm text-zinc-400">Songs Collected</p>
+              </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-3xl font-black text-yellow-400">6</p>
-          <p className="mt-2 text-sm text-zinc-400">Super Likes</p>
-        </div>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <p className="text-3xl font-black text-yellow-400">
+                  {superLikedSongs.length}
+                </p>
+                <p className="mt-2 text-sm text-zinc-400">Super Likes</p>
+              </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-3xl font-black text-white">3</p>
-          <p className="mt-2 text-sm text-zinc-400">Playlists</p>
-        </div>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <p className="text-3xl font-black text-white">
+                  {playlistSongs.length}
+                </p>
+                <p className="mt-2 text-sm text-zinc-400">Playlist Songs</p>
+              </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-3xl font-black text-purple-400">Indie</p>
-          <p className="mt-2 text-sm text-zinc-400">Top Vibe</p>
-        </div>
-      </div>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <p className="text-2xl font-black text-purple-400">
+                  {selectedVibe || "None"}
+                </p>
+                <p className="mt-2 text-sm text-zinc-400">Last Vibe</p>
+              </div>
+            </div>
 
-      <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-5">
-        <p className="font-bold">Favorite discovery mode</p>
-        <p className="mt-2 text-sm text-zinc-400">
-          You seem to like late-night, chill, and gym sessions the most.
-        </p>
-      </div>
+            <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-5">
+              <p className="font-bold">Favorite discovery mode</p>
+              <p className="mt-2 text-sm text-zinc-400">
+                Keep swiping and SwipeTune will learn what kind of music you
+                like most.
+              </p>
+            </div>
 
-      <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
-        <button
-          onClick={() => setStage("home")}
-          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-        >
-          <div className="text-xl">🏠</div>
-          Home
-        </button>
+            <div className="mt-10 grid grid-cols-4 rounded-3xl border border-white/10 bg-white/5 p-2 text-center text-xs text-zinc-400">
+              <button
+                onClick={() => setStage("home")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">🏠</div>
+                Home
+              </button>
 
-        <button
-          onClick={() => setStage("vibe")}
-          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-        >
-          <div className="text-xl">🎵</div>
-          Discover
-        </button>
+              <button
+                onClick={() => setStage("vibe")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">🎵</div>
+                Discover
+              </button>
 
-        <button
-          onClick={() => setStage("library")}
-          className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
-        >
-          <div className="text-xl">📚</div>
-          Library
-        </button>
+              <button
+                onClick={() => setStage("library")}
+                className="rounded-2xl px-2 py-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <div className="text-xl">📚</div>
+                Library
+              </button>
 
-        <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
-          <div className="text-xl">👤</div>
-          Profile
-        </button>
-      </div>
-    </div>
-  </section>
-)}
+              <button className="rounded-2xl bg-green-500/15 px-2 py-3 text-green-400">
+                <div className="text-xl">👤</div>
+                Profile
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {stage === "vibe" && (
         <section className="relative z-10 flex min-h-screen flex-col items-center justify-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-green-500">
@@ -503,7 +603,7 @@ export default function Home() {
           </div>
 
           <button
-            onClick={() => selectedVibe && setStage("discover")}
+            onClick={() => selectedVibe && startDiscovery(selectedVibe)}
             className="mt-10 w-full max-w-sm rounded-full bg-green-500 py-4 text-lg font-bold text-black transition hover:bg-green-400 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400"
             disabled={!selectedVibe}
           >
@@ -511,7 +611,7 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => setStage("landing")}
+            onClick={() => setStage("home")}
             className="mt-5 text-sm text-zinc-500 transition hover:text-white"
           >
             Back
@@ -624,7 +724,7 @@ export default function Home() {
           <h2 className="text-5xl font-black">Nice discoveries.</h2>
 
           <p className="mt-5 max-w-md text-zinc-400">
-            You just finished your first SwipeTune discovery session.
+            You just finished your SwipeTune discovery session.
           </p>
 
           <div className="mt-10 grid w-full max-w-sm grid-cols-3 gap-4">
@@ -647,8 +747,15 @@ export default function Home() {
           </div>
 
           <button
+            onClick={() => setStage("library")}
+            className="mt-8 w-full max-w-sm rounded-full bg-white py-4 text-lg font-bold text-black transition hover:bg-zinc-200"
+          >
+            View Library
+          </button>
+
+          <button
             onClick={resetDemo}
-            className="mt-10 w-full max-w-sm rounded-full bg-green-500 py-4 text-lg font-bold text-black transition hover:bg-green-400"
+            className="mt-4 w-full max-w-sm rounded-full bg-green-500 py-4 text-lg font-bold text-black transition hover:bg-green-400"
           >
             Start Over
           </button>
